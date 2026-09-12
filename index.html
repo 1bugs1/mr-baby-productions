@@ -8,9 +8,25 @@
     <title>Mr. Baby Productions</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23c9d9f5'/%3E%3Cpath d='M12 46V18h8l12 15 12-15h8v28h-9V31L32 45 21 31v15z' fill='%23111111'/%3E%3C/svg%3E">
     <style>
+      @font-face {
+        font-family: "Plain";
+        src: url("assets/Plain-Regular.otf") format("opentype");
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Plain";
+        src: url("assets/Plain-Black.otf") format("opentype");
+        font-style: normal;
+        font-weight: 900;
+        font-display: swap;
+      }
+
       :root {
         color-scheme: light;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: "Plain", Arial, Helvetica, sans-serif;
         font-synthesis: none;
         --landing-background: #c9d9f5;
         --landing-foreground: #111111;
@@ -68,6 +84,7 @@
 
       .wordmark {
         margin: 0;
+        font-family: "Plain", Arial, Helvetica, sans-serif;
         font-size: clamp(2.25rem, 4.8vw, 5rem);
         font-weight: 900;
         line-height: 0.94;
@@ -81,12 +98,13 @@
       }
 
       .content {
-        width: min(100%, 23rem);
+        width: min(100%, 42rem);
         margin: 0;
         font-size: clamp(1rem, 1.2vw, 1.125rem);
         font-weight: 400;
         line-height: 1.16;
         letter-spacing: -0.03em;
+        text-align: center;
       }
 
       .filmography {
@@ -135,23 +153,23 @@
       }
 
       .corner--top-left {
-        top: clamp(1.25rem, 2.5vw, 2.5rem);
-        left: clamp(1.25rem, 2.5vw, 2.5rem);
+        top: clamp(1.25rem, 4.5vw, 4rem);
+        left: clamp(1.25rem, 4.5vw, 4rem);
       }
 
       .corner--top-right {
-        top: clamp(1.25rem, 2.5vw, 2.5rem);
-        right: clamp(1.25rem, 2.5vw, 2.5rem);
+        top: clamp(1.25rem, 4.5vw, 4rem);
+        right: clamp(1.25rem, 4.5vw, 4rem);
       }
 
       .corner--bottom-left {
-        bottom: clamp(1.25rem, 2.5vw, 2.5rem);
-        left: clamp(1.25rem, 2.5vw, 2.5rem);
+        bottom: clamp(1.25rem, 4.5vw, 4rem);
+        left: clamp(1.25rem, 4.5vw, 4rem);
       }
 
       .corner--bottom-right {
-        right: clamp(1.25rem, 2.5vw, 2.5rem);
-        bottom: clamp(1.25rem, 2.5vw, 2.5rem);
+        right: clamp(1.25rem, 4.5vw, 4rem);
+        bottom: clamp(1.25rem, 4.5vw, 4rem);
       }
 
       .corner-link {
@@ -162,6 +180,10 @@
       .current {
         cursor: default;
         user-select: none;
+      }
+
+      .heart {
+        font-family: Arial, Helvetica, sans-serif;
       }
 
       .email:focus-visible,
@@ -207,7 +229,7 @@
   <body>
     <main>
       <section class="view view--landing" data-route="home" aria-label="Mr. Baby Productions home">
-        <span class="corner corner--top-left current" aria-label="Current page: home">&lt;3</span>
+        <span class="corner corner--top-left current heart" aria-label="Current page: home">&lt;3</span>
         <a class="corner corner--top-right corner-link" href="#contact">contact</a>
         <a class="corner corner--bottom-left corner-link" href="#films">films</a>
         <a class="corner corner--bottom-right corner-link" href="#info">info</a>
@@ -222,7 +244,7 @@
         <a class="corner corner--top-left corner-link" href="#" aria-label="Back to home">&larr;</a>
         <a class="corner corner--top-right corner-link" href="#contact">contact</a>
         <a class="corner corner--bottom-left corner-link" href="#films">films</a>
-        <span class="corner corner--bottom-right current" aria-label="Current page: info">&lt;3</span>
+        <span class="corner corner--bottom-right current heart" aria-label="Current page: info">&lt;3</span>
 
         <p class="content">mr. baby productions is a berlin-based production company. we make small films across fiction, documentary and the space in between, collaborating with filmmakers who work independently and on a small scale.</p>
       </section>
@@ -230,7 +252,7 @@
       <section class="view" data-route="films" aria-label="Mr. Baby Productions films" hidden>
         <a class="corner corner--top-left corner-link" href="#" aria-label="Back to home">&larr;</a>
         <a class="corner corner--top-right corner-link" href="#contact">contact</a>
-        <span class="corner corner--bottom-left current" aria-label="Current page: films">&lt;3</span>
+        <span class="corner corner--bottom-left current heart" aria-label="Current page: films">&lt;3</span>
         <a class="corner corner--bottom-right corner-link" href="#info">info</a>
 
         <dl class="filmography">
@@ -244,7 +266,7 @@
 
       <section class="view" data-route="contact" aria-label="Contact Mr. Baby Productions" hidden>
         <a class="corner corner--top-left corner-link" href="#" aria-label="Back to home">&larr;</a>
-        <span class="corner corner--top-right current" aria-label="Current page: contact">&lt;3</span>
+        <span class="corner corner--top-right current heart" aria-label="Current page: contact">&lt;3</span>
         <a class="corner corner--bottom-left corner-link" href="#films">films</a>
         <a class="corner corner--bottom-right corner-link" href="#info">info</a>
 
@@ -267,13 +289,32 @@
       const status = document.querySelector("#copy-status");
       const themeColor = document.querySelector('meta[name="theme-color"]');
 
-      const randomNumber = window.crypto?.getRandomValues
-        ? window.crypto.getRandomValues(new Uint32Array(1))[0]
-        : Math.floor(Math.random() * 4294967296);
-      const theme = themes[randomNumber % themes.length];
+      let themeIndex;
+      let theme = themes[0];
+      let previousRoute = null;
 
-      document.documentElement.style.setProperty("--landing-background", theme.background);
-      document.documentElement.style.setProperty("--landing-foreground", theme.foreground);
+      try {
+        const savedThemeIndex = Number.parseInt(localStorage.getItem("mr-baby-theme"), 10);
+        themeIndex = Number.isInteger(savedThemeIndex) && savedThemeIndex >= 0
+          ? savedThemeIndex % themes.length
+          : Math.floor(Math.random() * themes.length);
+      } catch {
+        themeIndex = Math.floor(Math.random() * themes.length);
+      }
+
+      function advanceTheme() {
+        themeIndex = (themeIndex + 1) % themes.length;
+        theme = themes[themeIndex];
+
+        document.documentElement.style.setProperty("--landing-background", theme.background);
+        document.documentElement.style.setProperty("--landing-foreground", theme.foreground);
+
+        try {
+          localStorage.setItem("mr-baby-theme", String(themeIndex));
+        } catch {
+          // The colour still rotates during this visit if storage is unavailable.
+        }
+      }
 
       function currentRoute() {
         const hash = window.location.hash.slice(1).toLowerCase();
@@ -282,6 +323,10 @@
 
       function renderRoute() {
         const route = currentRoute();
+
+        if (route === "home" && previousRoute !== "home") {
+          advanceTheme();
+        }
 
         views.forEach((view) => {
           view.hidden = view.dataset.route !== route;
@@ -297,6 +342,8 @@
         if (window.location.hash && focusTarget) {
           focusTarget.focus({ preventScroll: true });
         }
+
+        previousRoute = route;
       }
 
       async function copyEmail() {
