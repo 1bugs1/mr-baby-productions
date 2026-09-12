@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#c9d9f5">
-    <meta name="description" content="Mr. Baby Productions is a Berlin-based production company making small films across fiction, documentary and the space in between.">
+    <meta name="description" content="Mr. Baby Productions is a Berlin-based production company making small films across fiction, documentary and the space in between, with a focus on queer perspectives and collaborative ways of working.">
     <title>Mr. Baby Productions</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23c9d9f5'/%3E%3Cpath d='M12 46V18h8l12 15 12-15h8v28h-9V31L32 45 21 31v15z' fill='%23111111'/%3E%3C/svg%3E">
     <style>
@@ -30,6 +30,7 @@
         font-synthesis: none;
         --landing-background: #c9d9f5;
         --landing-foreground: #111111;
+        --dog-filter: grayscale(1) contrast(1.65) brightness(0.42);
         --page-background: #f7f7f5;
         --page-foreground: #111111;
       }
@@ -83,18 +84,33 @@
       }
 
       .wordmark {
+        position: relative;
+        z-index: 1;
         margin: 0;
         font-family: "Plain", Arial, Helvetica, sans-serif;
         font-size: clamp(2.25rem, 4.8vw, 5rem);
         font-weight: 900;
         line-height: 0.94;
-        letter-spacing: -0.065em;
+        letter-spacing: -0.02em;
         text-align: center;
         text-transform: uppercase;
       }
 
       .wordmark span {
         display: block;
+      }
+
+      .flying-dog {
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        left: 0;
+        width: clamp(6rem, 7vw, 8rem);
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        filter: var(--dog-filter);
+        will-change: transform;
       }
 
       .content {
@@ -111,7 +127,8 @@
         display: grid;
         grid-template-columns: auto minmax(0, 1fr);
         gap: 0 2.25rem;
-        width: min(100%, 35rem);
+        width: max-content;
+        max-width: 100%;
         margin: 0;
         font-size: clamp(0.95rem, 1.05vw, 1.05rem);
         line-height: 1.5;
@@ -135,6 +152,10 @@
         font-weight: 400;
         letter-spacing: -0.03em;
         cursor: copy;
+      }
+
+      .email-at {
+        font-family: Arial, Helvetica, sans-serif;
       }
 
       .email:hover,
@@ -202,6 +223,10 @@
           font-size: clamp(2.4rem, 13vw, 4rem);
         }
 
+        .flying-dog {
+          width: 5.5rem;
+        }
+
         .content {
           width: min(100%, 20rem);
           font-size: 1rem;
@@ -224,6 +249,12 @@
           text-align: center;
         }
       }
+
+      @media (prefers-reduced-motion: reduce) {
+        .flying-dog {
+          display: none;
+        }
+      }
     </style>
   </head>
   <body>
@@ -233,6 +264,8 @@
         <a class="corner corner--top-right corner-link" href="#contact">contact</a>
         <a class="corner corner--bottom-left corner-link" href="#films">films</a>
         <a class="corner corner--bottom-right corner-link" href="#info">info</a>
+
+        <img class="flying-dog" src="assets/mr-baby-dog.png" alt="" aria-hidden="true">
 
         <h1 class="wordmark">
           <span>Mr. Baby</span>
@@ -246,7 +279,7 @@
         <a class="corner corner--bottom-left corner-link" href="#films">films</a>
         <span class="corner corner--bottom-right current heart" aria-label="Current page: info">&lt;3</span>
 
-        <p class="content">mr. baby productions is a berlin-based production company. we make small films across fiction, documentary and the space in between, collaborating with filmmakers who work independently and on a small scale.</p>
+        <p class="content">mr. baby productions is a berlin-based production company.<br>we make small films across fiction, documentary and the space in between,<br>with a focus on queer perspectives and collaborative ways of working.</p>
       </section>
 
       <section class="view" data-route="films" aria-label="Mr. Baby Productions films" hidden>
@@ -270,7 +303,7 @@
         <a class="corner corner--bottom-left corner-link" href="#films">films</a>
         <a class="corner corner--bottom-right corner-link" href="#info">info</a>
 
-        <button class="email" type="button" aria-describedby="copy-status">hi@mrbabyproductions.com</button>
+        <button class="email" type="button" aria-describedby="copy-status">hi<span class="email-at">@</span>mrbabyproductions.com</button>
         <span id="copy-status" role="status" aria-live="polite" hidden></span>
       </section>
     </main>
@@ -279,13 +312,26 @@
       const EMAIL = "hi@mrbabyproductions.com";
       const routes = new Set(["info", "films", "contact"]);
       const themes = [
-        { background: "#c9d9f5", foreground: "#111111" },
-        { background: "#ff3fc8", foreground: "#850016" },
-        { background: "#1f4a9b", foreground: "#d6e2f8" }
+        {
+          background: "#c9d9f5",
+          foreground: "#111111",
+          dogFilter: "grayscale(1) contrast(1.65) brightness(0.42)"
+        },
+        {
+          background: "#ff3fc8",
+          foreground: "#850016",
+          dogFilter: "grayscale(1) sepia(1) saturate(18) hue-rotate(320deg) brightness(0.78) contrast(1.25)"
+        },
+        {
+          background: "#1f4a9b",
+          foreground: "#d6e2f8",
+          dogFilter: "grayscale(1) invert(1) brightness(1.8) contrast(0.8)"
+        }
       ];
 
       const views = [...document.querySelectorAll("[data-route]")];
       const emailButton = document.querySelector(".email");
+      const flyingDog = document.querySelector(".flying-dog");
       const status = document.querySelector("#copy-status");
       const themeColor = document.querySelector('meta[name="theme-color"]');
 
@@ -308,6 +354,7 @@
 
         document.documentElement.style.setProperty("--landing-background", theme.background);
         document.documentElement.style.setProperty("--landing-foreground", theme.foreground);
+        document.documentElement.style.setProperty("--dog-filter", theme.dogFilter);
 
         try {
           localStorage.setItem("mr-baby-theme", String(themeIndex));
@@ -366,15 +413,53 @@
         status.textContent = `${EMAIL} copied to clipboard`;
 
         window.setTimeout(() => {
-          emailButton.textContent = EMAIL;
+          emailButton.innerHTML = 'hi<span class="email-at">@</span>mrbabyproductions.com';
           status.textContent = "";
           status.hidden = true;
         }, 1200);
       }
 
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      let dogX = window.innerWidth * 0.08;
+      let dogY = window.innerHeight * 0.12;
+      let dogVelocityX = 0.82;
+      let dogVelocityY = 0.64;
+      let previousFrameTime = null;
+
+      function animateDog(frameTime) {
+        const onHomePage = currentRoute() === "home";
+
+        if (onHomePage && !reducedMotion.matches) {
+          const frameScale = previousFrameTime === null
+            ? 1
+            : Math.min((frameTime - previousFrameTime) / 16.67, 3);
+          const maximumX = Math.max(0, window.innerWidth - flyingDog.offsetWidth);
+          const maximumY = Math.max(0, window.innerHeight - flyingDog.offsetHeight);
+
+          dogX += dogVelocityX * frameScale;
+          dogY += dogVelocityY * frameScale;
+
+          if (dogX <= 0 || dogX >= maximumX) {
+            dogX = Math.min(Math.max(dogX, 0), maximumX);
+            dogVelocityX *= -1;
+          }
+
+          if (dogY <= 0 || dogY >= maximumY) {
+            dogY = Math.min(Math.max(dogY, 0), maximumY);
+            dogVelocityY *= -1;
+          }
+
+          flyingDog.style.transform = `translate3d(${dogX}px, ${dogY}px, 0)`;
+        }
+
+        previousFrameTime = frameTime;
+        window.requestAnimationFrame(animateDog);
+      }
+
       window.addEventListener("hashchange", renderRoute);
       emailButton.addEventListener("click", copyEmail);
       renderRoute();
+      window.requestAnimationFrame(animateDog);
     </script>
   </body>
 </html>
