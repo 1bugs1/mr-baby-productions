@@ -306,51 +306,6 @@
         font-family: Arial, Helvetica, sans-serif;
       }
 
-      .analytics-consent {
-        position: fixed;
-        z-index: 20;
-        top: 1.25rem;
-        left: 50%;
-        transform: translateX(-50%);
-        width: min(25rem, calc(100vw - 2.5rem));
-        padding: 0.9rem 1rem;
-        border: 1px solid #111111;
-        background: #f7f7f5;
-        color: #111111;
-        font-size: 0.875rem;
-        line-height: 1.15;
-        letter-spacing: -0.02em;
-      }
-
-      .analytics-consent[hidden] {
-        display: none;
-      }
-
-      .analytics-consent p {
-        margin: 0 0 0.8rem;
-      }
-
-      .analytics-consent-actions {
-        display: flex;
-        gap: 1rem;
-      }
-
-      .analytics-consent button {
-        padding: 0;
-        background: transparent;
-        color: inherit;
-        text-decoration: underline;
-        text-decoration-thickness: 0.08em;
-        text-underline-offset: 0.18em;
-        cursor: pointer;
-      }
-
-      .analytics-consent button:focus-visible {
-        border-radius: 0.1rem;
-        outline: 2px solid currentColor;
-        outline-offset: 0.25rem;
-      }
-
       .email:focus-visible,
       .corner-link:focus-visible {
         border-radius: 0.1rem;
@@ -518,18 +473,8 @@
       </section>
     </main>
 
-    <aside class="analytics-consent" aria-label="Analytics preferences" hidden>
-      <p>mr. baby uses google analytics to understand visits. is that okay?</p>
-      <div class="analytics-consent-actions">
-        <button type="button" data-analytics-consent="granted">yes</button>
-        <button type="button" data-analytics-consent="denied">no thanks</button>
-      </div>
-    </aside>
-
     <script>
       const EMAIL = "hi@mrbabyproductions.com";
-      const ANALYTICS_ID = "G-BDMX9R4G2R";
-      const ANALYTICS_CONSENT_KEY = "mr-baby-analytics-consent";
       const routes = new Set(["info", "films", "contact"]);
       const themes = [
         {
@@ -556,74 +501,10 @@
       const filmTriggers = [...document.querySelectorAll("[data-film-trigger]")];
       const filmBackgrounds = [...document.querySelectorAll("[data-film-background]")];
       const filmSummaries = [...document.querySelectorAll("[data-film-summary]")];
-      const analyticsConsent = document.querySelector(".analytics-consent");
-      const analyticsConsentButtons = [...document.querySelectorAll("[data-analytics-consent]")];
 
       let themeIndex;
       let theme = themes[0];
       let previousRoute = null;
-      let activeFilm = null;
-      let analyticsEnabled = false;
-
-      function analyticsEvent(name, parameters = {}) {
-        if (analyticsEnabled && typeof window.gtag === "function") {
-          window.gtag("event", name, parameters);
-        }
-      }
-
-      function trackPageView() {
-        analyticsEvent("page_view", {
-          page_title: document.title,
-          page_location: window.location.href,
-          page_path: `${window.location.pathname}${window.location.search}${window.location.hash}`
-        });
-      }
-
-      function loadAnalytics() {
-        if (analyticsEnabled) return;
-
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function gtag() {
-          window.dataLayer.push(arguments);
-        };
-        window.gtag("js", new Date());
-        window.gtag("config", ANALYTICS_ID, { send_page_view: false });
-
-        const googleTag = document.createElement("script");
-        googleTag.async = true;
-        googleTag.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}`;
-        document.head.appendChild(googleTag);
-
-        analyticsEnabled = true;
-        trackPageView();
-      }
-
-      function saveAnalyticsConsent(choice) {
-        try {
-          localStorage.setItem(ANALYTICS_CONSENT_KEY, choice);
-        } catch {
-          // The choice lasts for this page view if storage is unavailable.
-        }
-
-        analyticsConsent.hidden = true;
-        if (choice === "granted") loadAnalytics();
-      }
-
-      function initialiseAnalyticsConsent() {
-        let savedChoice = null;
-
-        try {
-          savedChoice = localStorage.getItem(ANALYTICS_CONSENT_KEY);
-        } catch {
-          // Show the choice when storage is unavailable.
-        }
-
-        if (savedChoice === "granted") {
-          loadAnalytics();
-        } else if (savedChoice !== "denied") {
-          analyticsConsent.hidden = false;
-        }
-      }
 
       try {
         const savedThemeIndex = Number.parseInt(localStorage.getItem("mr-baby-theme"), 10);
@@ -655,8 +536,6 @@
       }
 
       function showFilm(film) {
-        const filmChanged = activeFilm !== film;
-
         filmBackgrounds.forEach((background) => {
           background.classList.toggle("is-active", background.dataset.filmBackground === film);
         });
@@ -668,17 +547,10 @@
         filmTriggers.forEach((trigger) => {
           trigger.setAttribute("aria-current", String(trigger.dataset.filmTrigger === film));
         });
-
-        if (analyticsEnabled && filmChanged && currentRoute() === "films") {
-          analyticsEvent("film_preview", { film_name: film });
-        }
-
-        activeFilm = film;
       }
 
       function renderRoute() {
         const route = currentRoute();
-        const routeChanged = previousRoute !== route;
 
         if (route === "home" && previousRoute !== "home") {
           advanceTheme();
@@ -699,16 +571,10 @@
           focusTarget.focus({ preventScroll: true });
         }
 
-        if (analyticsEnabled && routeChanged) {
-          trackPageView();
-        }
-
         previousRoute = route;
       }
 
       async function copyEmail() {
-        analyticsEvent("email_click", { link_text: EMAIL });
-
         try {
           await navigator.clipboard.writeText(EMAIL);
         } catch {
@@ -764,9 +630,6 @@
 
       window.addEventListener("hashchange", renderRoute);
       emailButton.addEventListener("click", copyEmail);
-      analyticsConsentButtons.forEach((button) => {
-        button.addEventListener("click", () => saveAnalyticsConsent(button.dataset.analyticsConsent));
-      });
       filmTriggers.forEach((trigger) => {
         const film = trigger.dataset.filmTrigger;
         trigger.addEventListener("mouseenter", () => showFilm(film));
@@ -774,7 +637,6 @@
         trigger.addEventListener("click", () => showFilm(film));
       });
       renderRoute();
-      initialiseAnalyticsConsent();
       showFilm("acomih");
       window.requestAnimationFrame(animateDog);
     </script>
